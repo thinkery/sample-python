@@ -46,4 +46,4 @@ class API(object):
 		else:
 			content = response.content
 
-		return Client(self.client_id, self.client_secret, content['access_token'])
+		return Client(content['access_token'])
