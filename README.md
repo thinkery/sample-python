@@ -14,7 +14,7 @@ $ python add-thing.py "test thing" -t foo bar
 (the response is the raw output from the api, which shows the thing that has been added successfully)
 
 Requirements
-============
+------------
 
 To use the API, you must create your API keys at http://thinkery.me/api/apps/
 
