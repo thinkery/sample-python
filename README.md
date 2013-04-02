@@ -16,7 +16,7 @@ $ python add-thing.py "test thing" -t foo bar
 Requirements
 ------------
 
-To use the API, you must create your API keys at http://thinkery.me/api/apps/
+To use the API, you must create your API keys at https://thinkery.me/api/apps/
 
 Also the [requests](https://github.com/kennethreitz/requests) library is being used. You can install it like this:
 ```python
