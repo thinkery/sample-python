@@ -8,7 +8,8 @@ class Client(object):
 		"""
 		Initializes the API client with the necessary info
 		"""
-		self.r = requests.session(params={'access_token': access_token})
+		self.r = requests.Session()
+		self.r.params = {'access_token': access_token}
 
 	def get(self, call):
 		"""
