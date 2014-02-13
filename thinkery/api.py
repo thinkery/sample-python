@@ -10,7 +10,7 @@ except ImportError:
 
 # heavily inspired by https://github.com/maraujop/requests-oauth2
 class API(object):
-	authorization_url = 'http://thinkery.me/api/authorize.php'
+	authorization_url = 'https://thinkery.me/api/authorize.php'
 	token_url = 'token'
 	site = 'https://api.thinkery.me/v1/'
 	logged_in = False
