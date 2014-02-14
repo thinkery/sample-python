@@ -10,13 +10,6 @@ except ImportError:
 	from urllib import urlopen
 	from urllib import quote
 
-try:
-	import simplejson as json
-except ImportError:
-	import json
-
-from io import StringIO
-
 # heavily inspired by https://github.com/maraujop/requests-oauth2
 class API(object):
 	authorization_url = 'https://thinkery.me/api/authorize.php'
