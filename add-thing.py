@@ -1,7 +1,4 @@
-import thinkery
-import config
-import argparse
-import getpass
+import thinkery, config, argparse, getpass
 
 parser = argparse.ArgumentParser(description='Add a thing to thinkery')
 parser.add_argument('title', metavar='title', help='the thing title')

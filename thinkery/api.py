@@ -15,7 +15,7 @@ class API(object):
 	site = 'https://api.thinkery.me/v1/'
 	logged_in = False
 	access_token = None
-	config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config.pkl')
+	token_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'tokens.pkl')
 
 	def __init__(self, client_id, client_secret, redirect_uri=None):
 		"""
@@ -26,7 +26,7 @@ class API(object):
 		self.redirect_uri = redirect_uri
 
 		try:
-			config = open(self.config_file, 'rb')
+			config = open(self.token_file, 'rb')
 			data = pickle.load(config)
 			config.close()
 			if not self.test(data['access_token']):
@@ -46,6 +46,9 @@ class API(object):
 		return "%s%s?%s" % (self.site, quote(self.authorization_url), urlencode(params))
 
 	def test(self, access_token, **kwargs):
+		"""
+		Makes a test-request to the API to see if the access_token is still valid
+		"""
 		url = "%s%s" % (self.site, "test")
 		data = {'client_id': self.client_id, 'client_secret': self.client_secret, 'access_token': access_token}
 		data.update(kwargs)
@@ -59,13 +62,16 @@ class API(object):
 		else:
 			content = response.content
 
-		if content['user']:
+		if 'user' in content:
 			self.access_token = access_token
 			return True
 
 		return False
 
 	def refresh_token(self, refresh_token, **kwargs):
+		"""
+		Gets a new set of tokens using the given refresh_token
+		"""
 		url = "%s%s" % (self.site, quote(self.token_url))
 		data = {'client_id': self.client_id, 'client_secret': self.client_secret, 'refresh_token': refresh_token, 'grant_type': 'refresh_token'}
 		data.update(kwargs)
@@ -82,7 +88,7 @@ class API(object):
 		if 'access_token' not in content:
 			raise IOError
 
-		config = open(self.config_file, 'wb')
+		config = open(self.token_file, 'wb')
 		pickle.dump(content, config)
 		config.close()
 
@@ -113,7 +119,7 @@ class API(object):
 		if 'access_token' not in content:
 			raise IOError
 
-		config = open(self.config_file, 'wb')
+		config = open(self.token_file, 'wb')
 		pickle.dump(content, config)
 		config.close()
 
