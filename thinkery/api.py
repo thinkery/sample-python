@@ -1,12 +1,21 @@
-import requests, pickle, os
-from urllib import quote, urlencode
-from urlparse import parse_qs
+import requests, pickle, os, getpass
 from thinkery.client import Client
+
+try:
+	from urllib.request import urlopen
+	from urllib.parse import urlparse
+	from urllib.parse import quote
+except ImportError:
+	from urlparse import urlparse
+	from urllib import urlopen
+	from urllib import quote
 
 try:
 	import simplejson as json
 except ImportError:
 	import json
+
+from io import StringIO
 
 # heavily inspired by https://github.com/maraujop/requests-oauth2
 class API(object):
@@ -33,9 +42,10 @@ class API(object):
 				self.refresh_token(data['refresh_token'])
 			self.logged_in = True
 		except EOFError:
-			return
+			pass
 		except IOError:
-			return
+			pass
+
 
 	def authorize_url(self, scope='', **kwargs):
 		"""
@@ -54,15 +64,12 @@ class API(object):
 		data.update(kwargs)
 		response = requests.post(url, data=data)
 
-		if isinstance(response.content, basestring):
-			try:
-				content = json.loads(response.content)
-			except ValueError:
-				content = parse_qs(response.content)
-		else:
-			content = response.content
+		try:
+			content = response.json()
+		except ValueError:
+			content = parse_qs(response.content)
 
-		if 'user' in content:
+		if "user" in content:
 			self.access_token = access_token
 			return True
 
@@ -77,13 +84,10 @@ class API(object):
 		data.update(kwargs)
 		response = requests.post(url, data=data)
 
-		if isinstance(response.content, basestring):
-			try:
-				content = json.loads(response.content)
-			except ValueError:
-				content = parse_qs(response.content)
-		else:
-			content = response.content
+		try:
+			content = response.json()
+		except ValueError:
+			content = parse_qs(response.content)
 
 		if 'access_token' not in content:
 			raise IOError
@@ -97,7 +101,18 @@ class API(object):
 
 
 	def get_client(self, **kwargs):
-		return Client(self.access_token)
+		if self.logged_in:
+			return Client(self.access_token)
+
+		try:
+			username = raw_input("Username [%s]: " % getpass.getuser())
+		except NameError:
+			username = input("Username [%s]: " % getpass.getuser())
+
+		if not username:
+			username = getpass.getuser()
+		password = getpass.getpass()
+		return self.login(username, password)
 
 	def login(self, username, password, **kwargs):
 		"""
@@ -108,13 +123,10 @@ class API(object):
 		data.update(kwargs)
 		response = requests.post(url, data=data)
 
-		if isinstance(response.content, basestring):
-			try:
-				content = json.loads(response.content)
-			except ValueError:
-				content = parse_qs(response.content)
-		else:
-			content = response.content
+		try:
+			content = response.json()
+		except ValueError:
+			content = parse_qs(response.content)
 
 		if 'access_token' not in content:
 			raise IOError

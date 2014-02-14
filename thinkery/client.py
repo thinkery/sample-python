@@ -1,5 +1,9 @@
 import requests
-from urllib import quote
+try:
+	from urllib.parse import quote
+except ImportError:
+	from urllib import quote
+
 
 class Client(object):
 	site = 'https://api.thinkery.me/v1/'
